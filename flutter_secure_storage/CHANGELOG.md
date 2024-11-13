@@ -1,3 +1,6 @@
+## 10.0.0-beta.1
+* [Android] Upgrade to custom implementation of the JetSec Crypto library
+
 ## 9.2.3
 * [iOS] Fix for issue #711: The specified item already exists in the keychain.
 
