@@ -276,7 +276,6 @@ public final class MasterKey {
             static String getKeystoreAlias(KeyGenParameterSpec keyGenParameterSpec) {
                 return keyGenParameterSpec.getKeystoreAlias();
             }
-            @SuppressWarnings("deprecation")
             static MasterKey build(Builder builder) throws GeneralSecurityException, IOException {
                 if (builder.mKeyScheme == null && builder.mKeyGenParameterSpec == null) {
                     throw new IllegalArgumentException("build() called before "

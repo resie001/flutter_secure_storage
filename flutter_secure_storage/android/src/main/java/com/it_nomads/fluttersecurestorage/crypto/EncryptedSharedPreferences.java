@@ -462,21 +462,15 @@ public final class EncryptedSharedPreferences implements SharedPreferences {
         }
         @Nullable
         public static EncryptedType fromId(int id) {
-            switch (id) {
-                case 0:
-                    return STRING;
-                case 1:
-                    return STRING_SET;
-                case 2:
-                    return INT;
-                case 3:
-                    return LONG;
-                case 4:
-                    return FLOAT;
-                case 5:
-                    return BOOLEAN;
-            }
-            return null;
+            return switch (id) {
+                case 0 -> STRING;
+                case 1 -> STRING_SET;
+                case 2 -> INT;
+                case 3 -> LONG;
+                case 4 -> FLOAT;
+                case 5 -> BOOLEAN;
+                default -> null;
+            };
         }
     }
     private Object getDecryptedObject(String key) throws SecurityException {
