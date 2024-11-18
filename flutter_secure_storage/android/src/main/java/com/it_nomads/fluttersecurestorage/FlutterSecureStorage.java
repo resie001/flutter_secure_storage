@@ -25,7 +25,7 @@ import java.util.Map;
 public class FlutterSecureStorage {
 
     private final String TAG = "SecureStorageAndroid";
-    private final Charset charset;
+    private final Charset charset = StandardCharsets.UTF_8;
     private final Context applicationContext;
     protected String ELEMENT_PREFERENCES_KEY_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIHNlY3VyZSBzdG9yYWdlCg";
     protected Map<String, Object> options;
@@ -37,13 +37,6 @@ public class FlutterSecureStorage {
     public FlutterSecureStorage(Context context, Map<String, Object> options) {
         this.options = options;
         applicationContext = context.getApplicationContext();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            charset = StandardCharsets.UTF_8;
-        } else {
-            //noinspection CharsetObjectCanBeUsed
-            charset = Charset.forName("UTF-8");
-        }
     }
 
     @SuppressWarnings({"ConstantConditions"})
@@ -142,32 +135,6 @@ public class FlutterSecureStorage {
 //        } else {
 //            storageCipher = storageCipherFactory.getCurrentStorageCipher(applicationContext);
 //        }
-    }
-
-    private void reEncryptPreferences(StorageCipherFactory storageCipherFactory, SharedPreferences source) throws Exception {
-        try {
-            storageCipher = storageCipherFactory.getSavedStorageCipher(applicationContext);
-            final Map<String, String> cache = new HashMap<>();
-            for (Map.Entry<String, ?> entry : source.getAll().entrySet()) {
-                Object v = entry.getValue();
-                String key = entry.getKey();
-                if (v instanceof String && key.contains(ELEMENT_PREFERENCES_KEY_PREFIX)) {
-                    final String decodedValue = decodeRawValue((String) v);
-                    cache.put(key, decodedValue);
-                }
-            }
-            storageCipher = storageCipherFactory.getCurrentStorageCipher(applicationContext);
-            final SharedPreferences.Editor editor = source.edit();
-            for (Map.Entry<String, String> entry : cache.entrySet()) {
-                byte[] result = storageCipher.encrypt(entry.getValue().getBytes(charset));
-                editor.putString(entry.getKey(), Base64.encodeToString(result, 0));
-            }
-            storageCipherFactory.storeCurrentAlgorithms(editor);
-            editor.apply();
-        } catch (Exception e) {
-            Log.e(TAG, "re-encryption failed", e);
-            storageCipher = storageCipherFactory.getSavedStorageCipher(applicationContext);
-        }
     }
 
     private void checkAndMigrateToEncrypted(SharedPreferences target) {
